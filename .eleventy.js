@@ -15,7 +15,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addShortcode('excerpt', article => extractExcerpt(article));
 
   // Folders to copy to output folder
-  eleventyConfig.addPassthroughCopy("css");
+  eleventyConfig.addPassthroughCopy("_build/css");
 };
 
 function extractExcerpt(article) {
