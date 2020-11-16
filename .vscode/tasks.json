@@ -1,0 +1,23 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Deno: Bundle",
+			"type": "shell",
+			"command": "deno bundle --unstable --config tsconfig.json ${file} static/experiments/${fileBasenameNoExtension}.bundle.js",
+			"group": "build",
+			"problemMatcher": [
+				"$tsc"
+			]
+		},
+		{
+			"label": "Deno: Start File Server",
+			"type": "shell",
+			"command": "deno run --allow-net --allow-read https://deno.land/std/http/file_server.ts ./public --host localhost",
+			"group": "none",
+			"problemMatcher": [
+				"$tsc"
+			]
+		}
+	]
+}

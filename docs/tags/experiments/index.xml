@@ -6,13 +6,22 @@
     <description>Recent content in experiments on Joseph Graziano</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 15 Nov 2020 16:26:00 +0000</lastBuildDate><atom:link href="https://jgrazian.github.io/tags/experiments/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 16 Nov 2020 14:55:00 +0000</lastBuildDate><atom:link href="https://jgrazian.github.io/tags/experiments/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Experiment #2: Bridge</title>
+      <link>https://jgrazian.github.io/posts/2020_11_16_exp_02_bridge/</link>
+      <pubDate>Mon, 16 Nov 2020 14:55:00 +0000</pubDate>
+      
+      <guid>https://jgrazian.github.io/posts/2020_11_16_exp_02_bridge/</guid>
+      <description>2d bridge</description>
+    </item>
+    
     <item>
       <title>Experiment #1: Graphs</title>
-      <link>https://jgrazian.github.io/posts/2020_11_15_graphs/</link>
+      <link>https://jgrazian.github.io/posts/2020_11_15_exp01_graphs/</link>
       <pubDate>Sun, 15 Nov 2020 16:26:00 +0000</pubDate>
       
-      <guid>https://jgrazian.github.io/posts/2020_11_15_graphs/</guid>
+      <guid>https://jgrazian.github.io/posts/2020_11_15_exp01_graphs/</guid>
       <description>In mathematics, and more specifically in graph theory, a graph is a structure amounting to a set of objects in which some pairs of the objects are in some sense &amp;quot;related&amp;quot;. The objects correspond to mathematical abstractions called vertices and each of the related pairs of vertices is called an edge. Typically, a graph is depicted in diagrammatic form as a set of dots or circles for the vertices, joined by lines or curves for the edges.</description>
     </item>
     
