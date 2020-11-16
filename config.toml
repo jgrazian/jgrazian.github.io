@@ -1,5 +1,5 @@
 publishdir = "docs"
-baseURL = "http://jgrazian.github.io/"
+baseURL = "https://jgrazian.github.io/"
 languageCode = "en-us"
 title = "Joseph Graziano"
 theme = "cactus"
