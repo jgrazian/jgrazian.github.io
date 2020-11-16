@@ -1,0 +1,19 @@
+{
+    "list": [
+        {
+            "name": "WGPU Raytracer",
+            "url": "https://github.com/jgrazian/wgpu-raytracer",
+            "desc": "A GPU accelerated ray tracer built with Rust + WebGPU."
+        },
+        {
+            "name": "WASM Raytracer",
+            "url": "https://jgrazian.github.io/wasm-raytracer/",
+            "desc": "A simple Web-Assembly (WASM) raytracer. [[code]](https://github.com/jgrazian/wasm-raytracer)"
+        },
+        {
+            "name": "Bouyancy Sim",
+            "url": "https://jgrazian.github.io/2d-bouyancy-sim/",
+            "desc": "A simple 2d simulation of bouyancy. [[code]](https://github.com/jgrazian/2d-bouyancy-sim)"
+        }
+    ]
+}

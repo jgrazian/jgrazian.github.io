@@ -1,0 +1,53 @@
+baseURL = "http://jgrazian.github.io/"
+languageCode = "en-us"
+title = "Joseph Graziano"
+theme = "cactus"
+# googleAnalytics = ""
+
+[params]
+  colortheme = "blue" # dark, light, white, or classic
+  description = "Welcome to the blog of Joseph Graziano."
+
+  mainSection = "posts"
+  showAllPostsOnHomePage = false
+  postsOnHomePage = 5
+
+  tagsOverview = false
+
+  showProjectsList = true
+  projectsUrl = "https://github.com/jgrazian"
+
+  googleAnalyticsAsync = true # not required
+
+# Main menu which appears below site header.
+[[menu.main]]
+name = "Home"
+url = "/"
+weight = 1
+
+[[menu.main]]
+name = "All posts"
+url = "/posts"
+weight = 2
+
+[[menu.main]]
+name = "Tags"
+url = "/tags"
+weight = 3
+
+[[menu.main]]
+name = "About"
+url = "/about"
+weight = 4
+
+[[params.social]]
+  name = "github"
+  link = "https://github.com/jgrazian"
+
+[[params.social]]
+  name = "email"
+  link = "joeyg11@vt.edu" # no need for "mailto:" at the start
+
+[[params.social]]
+  name = "linkedin"
+  link = "https://www.linkedin.com/in/jgrazian/"

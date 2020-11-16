@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>http://jgrazian.github.io/posts/2020_11_15_graphs/</loc>
+    <lastmod>2020-11-15T16:26:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://jgrazian.github.io/tags/experiments/</loc>
+    <lastmod>2020-11-15T16:26:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://jgrazian.github.io/</loc>
+    <lastmod>2020-11-15T16:26:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://jgrazian.github.io/posts/</loc>
+    <lastmod>2020-11-15T16:26:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://jgrazian.github.io/tags/</loc>
+    <lastmod>2020-11-15T16:26:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://jgrazian.github.io/about/</loc>
+    <lastmod>2020-11-15T16:08:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://jgrazian.github.io/posts/introduction/</loc>
+    <lastmod>2020-11-15T16:08:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://jgrazian.github.io/tags/test/</loc>
+    <lastmod>2020-11-15T16:08:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://jgrazian.github.io/categories/</loc>
+  </url>
+  
+</urlset>

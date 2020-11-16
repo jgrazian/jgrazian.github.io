@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Joseph Graziano</title>
+    <link>http://jgrazian.github.io/posts/</link>
+    <description>Recent content in Posts on Joseph Graziano</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 15 Nov 2020 16:26:00 +0000</lastBuildDate><atom:link href="http://jgrazian.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Experiment #1: Graphs</title>
+      <link>http://jgrazian.github.io/posts/2020_11_15_graphs/</link>
+      <pubDate>Sun, 15 Nov 2020 16:26:00 +0000</pubDate>
+      
+      <guid>http://jgrazian.github.io/posts/2020_11_15_graphs/</guid>
+      <description>In mathematics, and more specifically in graph theory, a graph is a structure amounting to a set of objects in which some pairs of the objects are in some sense &amp;quot;related&amp;quot;. The objects correspond to mathematical abstractions called vertices and each of the related pairs of vertices is called an edge. Typically, a graph is depicted in diagrammatic form as a set of dots or circles for the vertices, joined by lines or curves for the edges.</description>
+    </item>
+    
+    <item>
+      <title>Template</title>
+      <link>http://jgrazian.github.io/posts/introduction/</link>
+      <pubDate>Sun, 15 Nov 2020 16:08:00 +0000</pubDate>
+      
+      <guid>http://jgrazian.github.io/posts/introduction/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
