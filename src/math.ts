@@ -147,11 +147,12 @@ export class Matrix {
   }
 
   toString(): string {
+    const numDigits = 4;
     let out = "";
 
     let maxLen = 0;
     for (const i in this.data) {
-      let l = this.data[i].toString().length;
+      let l = this.data[i].toFixed(numDigits).toString().length;
       if (l > maxLen) {
         maxLen = l;
       }
@@ -160,7 +161,7 @@ export class Matrix {
     for (let i = 0; i < this.n; i++) {
       out += "|";
       for (let j = 0; j < this.m; j++) {
-        out += `${this.get(i, j)} `.padStart(maxLen + 1, " ");
+        out += `${this.get(i, j).toFixed(numDigits)} `.padStart(maxLen + 1, " ");
       }
       out += "|\n";
     }
@@ -179,16 +180,50 @@ export class Matrix {
     return mat;
   }
 
+  swapRow(r0: number, r1: number) {
+    let temp = [];
+    for (let j=0; j < this.n; j++) {
+      temp.push(this.get(r0, j));
+      this.set(r0, j, this.get(r1, j));
+    }
+    for (let j=0; j < this.n; j++) {
+      this.set(r1, j, temp[j]);
+    }
+  }
+
   /**
    * Mutates the matrix to put it into upper-triangular form using Gaussian Elimination
    * @param b b Vector to be augmented on A matrix
    */
   gaussianElimination(b: Vector) {
-    for (let j=0; j < this.n-1; j++) {
-      for (let i=j+1; i < this.n; i++) {
+    let n = this.n;
+    for (let j=0; j < n-1; j++) {
+
+      console.log(j);
+      let maxVal = Math.abs(this.get(j, j));
+      let maxRow = j;
+      for (let i=j+1; i < n; i++) {
+        let curVal = Math.abs(this.get(i, j));
+        if (curVal > maxVal) {
+          maxVal = curVal;
+          maxRow = i;
+        }
+      }
+      if (maxVal < 0.00001) {
+        console.log('Skip row')
+        continue;
+      }
+      if (maxRow != j) {
+        console.log(`Swapping ${j} and ${maxRow}`);
+        this.swapRow(j, maxRow);
+        b.swapRow(j, maxRow);
+      }
+
+      for (let i=j+1; i < n; i++) {
         let m = this.get(i, j)/this.get(j, j);
-        for (let k=j; k < this.n; k++) {
+        for (let k=j; k < n; k++) {
           this.set(i, k, this.get(i, k) - m*this.get(j, k));
+          console.log(this.toString());
         }
         b.set(i, b.get(i) - m*b.get(j));
       }
@@ -219,11 +254,12 @@ export class Matrix {
     let bCopy = new Vector(b.n);
     bCopy.data = Float32Array.from(b.data);
     this.gaussianElimination(bCopy);
+    console.log(this.toString());
     return this.backSubstitution(bCopy);
   }
 }
 
-class Vector {
+export class Vector {
   n: number;
   data: Float32Array;
 
@@ -256,6 +292,12 @@ class Vector {
     this.data[i] = v;
   }
 
+  swapRow(r0: number, r1: number) {
+    let temp = this.get(r0);
+    this.set(r0, r1);
+    this.set(r1, temp);
+  }
+
   toString(): string {
     let out = "";
 
@@ -275,3 +317,16 @@ class Vector {
     return out;
   }
 }
+
+function test() {
+  let data = [9, 3, 4,
+              4, 3, 4,
+              1, 1, 1
+            ];
+  let mat = Matrix.from(3, 3, data);
+
+  let b = Vector.from([7, 8, 3]);
+
+  console.log(mat.solve(b));
+}
+test();
