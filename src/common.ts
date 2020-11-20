@@ -1,4 +1,4 @@
-import { Vec2 } from "./math.ts";
+import { Vec2 } from "./newton-2d/newton_2d.js";
 
 export function getMousePos(canvas: HTMLCanvasElement, ev: MouseEvent) {
     var rect = canvas.getBoundingClientRect(), // abs. size of element

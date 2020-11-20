@@ -65,7 +65,10 @@
         canvas</canvas>
       <script type="module">
         import { main } from '{{.Params.script}}';
-        window.addEventListener('load', main)
+        async function indexMain() {
+          await main();
+        }
+        indexMain();
       </script>
       <div class="content" itemprop="articleBody">
         {{ .Content}}

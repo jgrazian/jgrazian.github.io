@@ -1,16 +1,18 @@
-import { Matrix, Vec2, Vector } from "./math.ts";
-import { getMousePos } from "./common.ts"
+import init, { Matrix, Vec2, Vector } from "./newton-2d/newton_2d.js";
+//import { getMousePos } from "./common"
 
 const g = 9.81;
 
-export function main() {
+export async function main() {
+    await init();
+
     const canvas = <HTMLCanvasElement> document.getElementById('canvas');
     const ctx = <CanvasRenderingContext2D> canvas.getContext('2d');
 
     let joints = [
-        new Node(new Vec2(-5, 0), SolverType.static),
-        new Node(new Vec2(0, -8.66), SolverType.dynamic),
-        new Node(new Vec2(5, 0), SolverType.static),
+        new Node(new Vec2(100, 200), SolverType.static),
+        new Node(new Vec2(150, 100), SolverType.dynamic),
+        new Node(new Vec2(300, 200), SolverType.static),
     ];
     joints[1].force = new Vec2(0, -1732);
 
@@ -22,9 +24,12 @@ export function main() {
     joints.forEach(j => j.draw(ctx));
     members.forEach(m => m.draw(ctx));
     let t = new Truss(joints, members);
-    console.log(t.globalStiffnessMatrix().toString());
-    console.log(t.forceVector().toString());
-    console.log(t.solve().toString());
+    console.log(t.globalStiffnessMatrix().to_string());
+    console.log(t.forceVector().to_string());
+
+    let sol = t.solve();
+    console.log(sol[0].to_string());
+    console.log(sol[1].to_string());
 }
 
 enum SolverType {
@@ -105,8 +110,8 @@ class Element {
     }
 
     localStiffnessMatrix(): Matrix {
-        const E = 10*1000;
-        const A = 0.1;//this.size * this.size;
+        const E = 31.4 * Math.pow(10, 6); // E of steel
+        const A = this.size * this.size;
         const L = this.length();
         const AEL = (A*E)/L;
 
@@ -114,29 +119,13 @@ class Element {
         const c = Math.cos(theta);
         const s = Math.sin(theta);
 
-        let m = new Matrix(4, 4);
-
-        m.set(0, 0, AEL*c*c);
-        m.set(0, 1, AEL*c*s);
-        m.set(0, 2, -AEL*c*c);
-        m.set(0, 3, -AEL*c*s);
-
-        m.set(1, 0, AEL*c*s);
-        m.set(1, 1, AEL*s*s);
-        m.set(1, 2, -AEL*c*s);
-        m.set(1, 3, -AEL*s*s);
-
-        m.set(2, 0, -AEL*c*c);
-        m.set(2, 1, -AEL*c*s);
-        m.set(2, 2, AEL*c*c);
-        m.set(2, 3, AEL*c*s);
-
-        m.set(3, 0, -AEL*c*s);
-        m.set(3, 1, -AEL*s*s);
-        m.set(3, 2, AEL*c*s);
-        m.set(3, 3, AEL*s*s);
-
-        return m;
+        let data = new Float64Array([
+             AEL*c*c,  AEL*c*s, -AEL*c*c, -AEL*c*s,
+             AEL*c*s,  AEL*s*s, -AEL*c*s, -AEL*s*s,
+            -AEL*c*c, -AEL*c*s,  AEL*c*c,  AEL*c*s,
+            -AEL*c*s, -AEL*s*s,  AEL*c*s,  AEL*s*s
+        ]);
+        return Matrix.from(4, 4, data);
     }
 }
 
@@ -149,20 +138,42 @@ class Truss {
         this.elements = (elements != undefined) ? elements : [];
     }
 
-    solve(): Vector {
+    // http://web.mit.edu/course/3/3.11/www/modules/fea.pdf
+    solve(): [Vector, Vector] {
         let m = this.globalStiffnessMatrix();
         let f = this.forceVector();
+        let u = new Vector(f.n);
 
-        return m.solve(f);
+        let freeNodes = [];
+        for (let i=0; i < this.nodes.length; i++) {
+            if (this.nodes[i].type != SolverType.static) {
+                freeNodes.push(i*2 + 0);
+                freeNodes.push(i*2 + 1);
+            }
+        }
+
+        // Solve for displacements
+        let f_reduced = Vector.from(new Float64Array(freeNodes.map(n => f.get(n))));
+        let m_reduced = m.get_rows_columns(new Uint32Array(freeNodes), new Uint32Array(freeNodes));
+        let u_reduced = m_reduced.solve_mut(f_reduced);
+
+        // Solve for forces
+        // Sub u_red back into the full u
+        for (let i=0; i < u_reduced.n; i++) {
+            u.set(freeNodes[i], u_reduced.get(i));
+        }
+        f = m.mul_vec(u);
+
+        return [f, u];
     }
 
     forceVector(): Vector {
         let f = new Vector(this.nodes.length * 2);
 
         for (let i=0; i < this.nodes.length; i++) {
-            let ind = i*2;
-            f.set(ind + 0, this.nodes[i].force.x);
-            f.set(ind + 1, this.nodes[i].force.y);
+            let idx = i*2;
+            f.set(idx + 0, this.nodes[i].force.x);
+            f.set(idx + 1, this.nodes[i].force.y);
         }
         return f;
     }

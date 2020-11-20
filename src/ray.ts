@@ -1,4 +1,4 @@
-import {Vec2} from './math.ts';
+import {Vec2} from './math';
 
 const g = 9.81;
 const G = 1;
@@ -68,7 +68,7 @@ class Ray {
     ctx.fill();
 
     // Line
-    let line = this.o.add(this.d.unit().mul(25.0));
+    let line = this.o.add(this.d.normalize().mul(25.0));
     ctx.beginPath();
     ctx.moveTo(this.o.x, this.o.y);
     ctx.lineTo(line.x, line.y);

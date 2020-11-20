@@ -1,8 +1,10 @@
-import { Matrix, Vec2 } from "./math.ts";
-import { getMousePos } from "./common.ts"
+import init, { Matrix, Vec2 } from "./newton-2d/newton_2d.js";
+import { getMousePos } from "./common.js"
 
-export function main() {
-  let mat = Matrix.randomLowerMatrix(8);
+export async function main() {
+  await init();
+
+  let mat = randomLowerMatrix(8);
   console.log(mat.toString());
 
   let nodes = [];
@@ -65,8 +67,8 @@ class Graph {
 
         if (this.edges.get(i, j) != 0) {
           let v = this.nodes[i].p.sub(this.nodes[j].p);
-          let start = v.unit().mul(-this.nodes[i].r).add(this.nodes[i].p);
-          let end = v.unit().mul(this.nodes[j].r).add(this.nodes[j].p);
+          let start = v.normalize().mul(-this.nodes[i].r).add(this.nodes[i].p);
+          let end = v.normalize().mul(this.nodes[j].r).add(this.nodes[j].p);
           this.ctx.beginPath();
           this.ctx.moveTo(start.x, start.y);
           this.ctx.lineTo(end.x, end.y);
@@ -94,7 +96,7 @@ class Graph {
         }
 
         let v = this.nodes[i].p.sub(this.nodes[j].p);
-        let unit = v.unit();
+        let unit = v.normalize();
         let dist = v.len();
 
         // Node collision
@@ -174,4 +176,16 @@ class GraphNode {
     ctx.stroke();
     ctx.fillText(this.value.toString(), this.p.x, this.p.y);
   }
+}
+
+function randomLowerMatrix(n: number): Matrix {
+  let mat = new Matrix(n, n);
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j <= i; j++) {
+      if (Math.random() < 0.35) {
+        mat.set(i, j, Math.round(Math.random() * 10));
+      }
+    }
+  }
+  return mat;
 }
