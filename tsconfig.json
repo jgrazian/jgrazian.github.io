@@ -2,6 +2,7 @@
     "compilerOptions": {
         "outDir": "static/experiments",
         "module": "ESNext",
+        "target": "ESNext",
         "lib": [
             "ESNext",
             "dom",

@@ -6,7 +6,18 @@
     <description>Recent content on Joseph Graziano</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 15 Nov 2020 16:26:00 +0000</lastBuildDate><atom:link href="https://jgrazian.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 16 Nov 2020 14:55:00 +0000</lastBuildDate><atom:link href="https://jgrazian.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Experiment #2: Truss Solver</title>
+      <link>https://jgrazian.github.io/posts/2020_11_16_exp02_truss/</link>
+      <pubDate>Mon, 16 Nov 2020 14:55:00 +0000</pubDate>
+      
+      <guid>https://jgrazian.github.io/posts/2020_11_16_exp02_truss/</guid>
+      <description>A 2d truss solver.
+Controls:
+ Click on nodes to select Click and drag to move nodes With a node selected click on other nodes to toggle connection. Click on trash with a node selected to delete it Double-Click on a node to begin forcing it. Click again to create a force in that direction with magnitude proportional to the distance between the node and click.  </description>
+    </item>
+    
     <item>
       <title>Experiment #1: Graphs</title>
       <link>https://jgrazian.github.io/posts/2020_11_15_exp01_graphs/</link>

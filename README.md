@@ -13,5 +13,15 @@
 
 3. Build
     ```
-    hugo -D
+    hugo
+    ```
+
+- To build Javascript from ./src.
+    ```
+    tsc
+    ```
+
+- To see drafts
+    ```
+    hugo server -D
     ```
