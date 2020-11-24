@@ -1,20 +1,30 @@
 import init, { Matrix, Vec2, Vector } from "./newton-2d/newton_2d.js";
-import { Button, getMousePos, lerpColor } from "./common.js"
+import { Button, getMousePos, round, roundToNearest, lerpColor } from "./common.js"
 
-// Force in N
-// E in GPa
+const canvas = <HTMLCanvasElement>document.getElementById('canvas');
+const ctx = <CanvasRenderingContext2D>canvas.getContext('2d');
+const inputE = <HTMLInputElement>document.getElementById('E');
+const inputSigma = <HTMLInputElement>document.getElementById('sigma');
+const inputA = <HTMLInputElement>document.getElementById('A');
+const inputPos = <HTMLInputElement>document.getElementById('pos');
+const inputForce = <HTMLInputElement>document.getElementById('force');
+
+// Force in kN
 let solved = false;
+let A = 1; // Area of elements, m^2
+let E = 31.4; // Young's Modulus, GPa
+let SIGMA = 250; // Yeild Stress of elements, MPa
 
 export async function main() {
     await init();
-
-    const canvas = <HTMLCanvasElement>document.getElementById('canvas');
-    const ctx = <CanvasRenderingContext2D>canvas.getContext('2d');
 
     let [joints, members] = demoTruss();
     let truss = new Truss(joints, members);
 
     function solve() {
+        A = inputA.valueAsNumber;
+        E = inputE.valueAsNumber * Math.pow(10, 6);
+        SIGMA = inputSigma.valueAsNumber * Math.pow(10, 3);
         console.log('Global Stiffness Matrix:\n' + truss.globalStiffnessMatrix().to_string());
         console.log('Global Forcing Vector:\n' + truss.forceVector().to_string());
         let sol = truss.solve();
@@ -22,6 +32,7 @@ export async function main() {
         console.log('Resulting forces:\n' + sol[0].to_string());
         console.log('Resulting displacements: \n' + sol[1].to_string());
         solved = true;
+        step(0);
     }
 
     let buttons = [
@@ -31,6 +42,9 @@ export async function main() {
         new Button('Trash', () => truss.deleteSelected(), new Vec2(10, 480), new Vec2(80, 50)),
         new Button('Solve', () => (!solved) ? solve() : solved = false, new Vec2(870, 10), new Vec2(80, 50))
     ];
+
+    inputPos.addEventListener('change', (ev) => truss.changePos((<HTMLInputElement>ev.target).value));
+    inputForce.addEventListener('change', (ev) => truss.changeForce((<HTMLInputElement>ev.target).value));
 
     canvas.addEventListener('click', ev => {
         let mpos = getMousePos(canvas, ev);
@@ -56,7 +70,8 @@ export async function main() {
 
 
     function step(dt: number) {
-        ctx.clearRect(0, 0, 1000, 1000);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawGrid(canvas, ctx);
         buttons.forEach(b => b.draw(ctx));
         truss.draw(ctx);
         window.requestAnimationFrame(step);
@@ -105,7 +120,7 @@ class Node {
 
     get force(): Vec2 {
         if (solved) {
-            return this._fApplied.add(this._fReaction);
+            return this._fReaction;
         } else {
             return this._fApplied;
         }
@@ -149,7 +164,7 @@ class Node {
             ctx.lineWidth = 2.0;
             ctx.beginPath();
             ctx.moveTo(this.pos.x, this.pos.y);
-            let force = this.force.normalize().mul(this.force.len() / 10_000);
+            let force = this.force.normalize().mul(this.force.len() / 10);
             ctx.lineTo(this.pos.x + force.x, this.pos.y + force.y);
             ctx.stroke();
         }
@@ -161,8 +176,8 @@ class Element {
     j: Node;
     size: number = 1;
 
-    E: number = 31.4 * Math.pow(10, 9); // E of steel, GPa
-    sigmaY: number = 250 * Math.pow(10, 6); // Yeild strength of steel, MPa
+    //E: number = 31.4 * Math.pow(10, 9); // E of steel, GPa
+    //sigmaY: number = 250 * Math.pow(10, 6); // Yeild strength of steel, MPa
     sigma: number = 0; // Stress in element
 
     constructor(i: Node, j: Node) {
@@ -184,7 +199,7 @@ class Element {
         ctx.lineCap = 'round';
         ctx.lineWidth = this.size + baseWidth;
         if (solved) {
-            let percent = this.sigma / this.sigmaY;
+            let percent = this.sigma / SIGMA;
             if (percent > 1.0) {
                 percent = 1.0;
             }
@@ -198,8 +213,8 @@ class Element {
     }
 
     localStiffnessMatrix(): Matrix {
-        const E = this.E;
-        const A = this.size * this.size;
+        //const E = this.E;
+        //const A = this.size * this.size;
         const L = this.length();
         const AEL = (A * E) / L;
 
@@ -274,7 +289,7 @@ class Truss {
         }
         // Calc stress in elements
         for (let element of this.elements) {
-            element.sigma = element.E * Math.sqrt(Math.pow(element.i._deform.x - element.j._deform.x, 2) + Math.pow(element.i._deform.y - element.j._deform.y, 2));
+            element.sigma = E * Math.sqrt(Math.pow(element.i._deform.x - element.j._deform.x, 2) + Math.pow(element.i._deform.y - element.j._deform.y, 2));
         }
     }
 
@@ -340,7 +355,7 @@ class Truss {
                     node.forcing = false;
                     return;
                 }
-                let force = point.sub(node.pos).mul(1000);
+                let force = point.sub(node.pos);
                 node._fApplied = force;
                 node.forcing = false;
                 return;
@@ -355,15 +370,21 @@ class Truss {
             if (prevSelection) {
                 prevSelection.selected = false;
             }
+            inputPos.value = null;
+            inputForce.value = null;
             return;
         }
 
         if (!prevSelection) {
+            inputPos.value = `${round(selected.pos.x, 3)}, ${round(selected.pos.y, 3)}`;
+            inputForce.value = `${round(selected.force.x, 3)}, ${round(selected.force.y, 3)}`;
             return;
         }
         // Clicked on self -> Uncheck
         if (prevSelection == selected) {
             prevSelection.selected = false;
+            inputPos.value = null;
+            inputForce.value = null;
             return;
         }
         // Clicked on a diffrent node -> toggle connection
@@ -402,9 +423,14 @@ class Truss {
     }
 
     mousemove(point: Vec2) {
+        let snap = true;
         for (let node of this.nodes) {
             if (node.drag) {
-                node._pos = point;
+                if (snap) {
+                    node._pos = new Vec2(roundToNearest(point.x, 25), roundToNearest(point.y, 25));
+                } else {
+                    node._pos = point;
+                }
             }
         }
     }
@@ -424,6 +450,24 @@ class Truss {
             selected.orientation += 90;
         } else {
             selected.orientation -= 90;
+        }
+    }
+
+    changePos(value: string) {
+        let [x, y] = value.split(',');
+        for (let node of this.nodes) {
+            if (node.selected) {
+                node._pos = new Vec2(Number(x), Number(y));
+            }
+        }
+    }
+
+    changeForce(value: string) {
+        let [x, y] = value.split(',');
+        for (let node of this.nodes) {
+            if (node.selected) {
+                node._fApplied = new Vec2(Number(x), Number(y));
+            }
         }
     }
 
@@ -502,18 +546,45 @@ function jointFree(scale: number): Path2D {
     return path;
 }
 
+function drawGrid(canvas: HTMLCanvasElement ,ctx: CanvasRenderingContext2D) {
+    ctx.beginPath();
+    ctx.strokeStyle = '#DCDCDC';
+    ctx.lineWidth = 1;
+    for (let x=0; x < canvas.width; x+=25) {
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+    }
+    for (let y=0; y < canvas.height; y+=25) {
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+    }
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 2;
+    ctx.moveTo(canvas.width - 50, canvas.height - 50);
+    ctx.lineTo(canvas.width - 10, canvas.height - 50);
+    ctx.moveTo(canvas.width - 50, canvas.height - 50);
+    ctx.lineTo(canvas.width - 50, canvas.height - 10);
+    ctx.stroke();
+    ctx.font = '14px JetBrains Mono';
+    ctx.fillText('+x', canvas.width - 20, canvas.height - 60);
+    ctx.fillText('+y', canvas.width - 60, canvas.height - 20);
+}
+
 function demoTruss(): [Node[], Element[]] {
     let joints = [
-        new Node(new Vec2(300, 200), JointType.Fixed),
-        new Node(new Vec2(400, 200), JointType.Free),
-        new Node(new Vec2(400, 300), JointType.Free),
+        new Node(new Vec2(400, 200), JointType.Fixed),
         new Node(new Vec2(500, 200), JointType.Free),
         new Node(new Vec2(500, 300), JointType.Free),
-        new Node(new Vec2(300, 300), JointType.Roller),
+        new Node(new Vec2(600, 200), JointType.Free),
+        new Node(new Vec2(600, 300), JointType.Free),
+        new Node(new Vec2(400, 300), JointType.Roller),
     ];
     joints[0].orientation = 90;
     joints[5].orientation = 90;
-    joints[4].force = new Vec2(0, 200000);
+    joints[4].force = new Vec2(0, 200);
 
     let members = [
         new Element(joints[0], joints[1]),

@@ -156,7 +156,17 @@
 
     </div>
     <div id="toc">
-      <nav id="TableOfContents"></nav>
+      <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#controls">Controls:</a></li>
+      </ul>
+    </li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#fea-explained">FEA Explained</a></li>
+  </ul>
+</nav>
     </div>
   </span>
 </div>
@@ -188,8 +198,11 @@
       </header>
 
       
-      <canvas style="border: solid 1px black; width: 100%;" id="canvas" width="960" height="540">Couldn't display
-        canvas</canvas>
+      <canvas style="border: solid 1px black; width: 100%;
+        position: relative; z-index:101;
+        -moz-user-select: none; -webkit-user-select: none; " id="canvas" width="960" height="540">
+        Couldn't display canvas
+      </canvas>
       <script type="module">
         import { main } from '\/experiments\/truss.js';
         async function indexMain() {
@@ -198,15 +211,78 @@
         indexMain();
       </script>
       <div class="content" itemprop="articleBody">
-        <p>A 2d truss solver.</p>
-<p>Controls:</p>
+        <p><input type="number" style="width: 96px" id="E"     value="31.4"> E (GPa)</input> |
+<input type="number" style="width: 96px" id="sigma" value="250"> σ<sub>yield</sub> (MPa)</input> |
+<input type="number" style="width: 96px" id="A"     value="1.0"> A (m<sup>2</sup>)</input>
+<br>
+<input type="text" id="pos"   placeholder="XX.X, YY.Y"> Position (m)</input> |
+<input type="text" id="force" placeholder="XX.X, YY.Y"> Force (kN)</input></p>
+<h3 id="controls">Controls:</h3>
 <ul>
 <li>Click on nodes to select</li>
 <li>Click and drag to move nodes</li>
 <li>With a node selected click on other nodes to toggle connection.</li>
-<li>Click on trash with a node selected to delete it</li>
-<li>Double-Click on a node to begin forcing it. Click again to create a force in that direction with magnitude proportional to the distance between the node and click.</li>
+<li>Use the mouse wheel to rotate a fixed or roller node.</li>
+<li>To delete a node select it then click &lsquo;Trash&rsquo;</li>
+<li>Double-Click on a node to add force in the direction of the next mouse click.</li>
+<li>Use the Position and Force boxes to enter new values for the selected node.</li>
 </ul>
+<p><em>Check out the developer console (F12) for the math.</em></p>
+<h2 id="about">About</h2>
+<p>One of the first real &lsquo;engineering&rsquo; classes that we took at school was Statics. Statics in engineering is the study of the loads on systems that do not move (a=0).
+My initial goal for this project was to create a solver for the classic truss problem that you solve a million times.</p>
+<p>The biggest difference between my goal and what I made comes from that fact that these elements <em>do</em> move when you solve the problem.
+That is because I found that the problem was just as easily solved as a 2d Finite Element Analysis (FEA) problem as it was a classic truss problem, and who doesnt like some good deflection. With some helpful <a href="http://web.mit.edu/course/3/3.11/www/modules/fea.pdf">online resources</a> I managed to cobble together this little demo.</p>
+<h2 id="fea-explained">FEA Explained</h2>
+<p>A Finite Element Analysis is an analysis conducted on&hellip; a finite number of elements. Using some clever math we can arrange the problem into a linear algerbra problem which will allow us to solve it easily. The math looks like this.
+$$Ku=f$$
+Where \(K\) is the <em>global stiffness matrix</em>, \(u\) is the <em>displacement vector</em>, and \(f\) is the <em>force vector</em>.</p>
+<p>\(K\) is the trickiest part of this so we will talk about it first. Consider a single 2d structural element, which looks like this. <img src="/images/fea_element.svg" alt="FEA element"> This element has <strong>4</strong> degrees of freedom (\(u_0\), \(v_0\), \(u_1\), \(v_1\)) and can only carry loads (\(F\)) along it&rsquo;s axis. Hook&rsquo;s Law for the force in a spring is \(f=kx\).</p>
+<p>In our case:
+$$k = \frac{AE}{L}$$
+<em>Where: \(A\) is the cross-section area of the element, \(E\) is the Young&rsquo;s Modulus of the element material and \(L\) is the element&rsquo;s length.</em></p>
+<p>And:
+$$x = (U_1cos(\theta) + V_1sin(\theta)) - (U_0cos(\theta) + V_0sin(\theta)) = \begin{bmatrix}-cos(\theta) &amp; -sin(\theta) &amp; cos(\theta) &amp; sin(\theta)\end{bmatrix}                    \begin{bmatrix}u_0 \\ v_0 \\ u_1 \\ v_1\end{bmatrix}$$
+All together:
+$$\begin{bmatrix}f_{x0} \\ f_{y0} \\ f_{x1} \\ f_{y1}\end{bmatrix} = \begin{bmatrix}-cos(\theta) \\ -sin(\theta) \\ cos(\theta) \\ sin(\theta)\end{bmatrix}F = \frac{AE}{L}\begin{bmatrix}-cos(\theta) &amp; -sin(\theta) &amp; cos(\theta) &amp; sin(\theta)\end{bmatrix} \begin{bmatrix}u_0 \\ v_0 \\ u_1 \\ v_1\end{bmatrix}$$</p>
+<p>Rearranged we get our <em>local stiffness matrix</em>:
+$$\begin{bmatrix}f_{x0} \\ f_{y0} \\ f_{x1} \\ f_{y1}\end{bmatrix} = \frac{AE}{L} \begin{bmatrix}
+cos^2(\theta) &amp; cos(\theta)sin(\theta) &amp; -cos^2(\theta) &amp; -cos(\theta)sin(\theta) \\ 
+cos(\theta)sin(\theta) &amp; sin^2(\theta) &amp; -cos(\theta)sin(\theta) &amp; sin^2(\theta) \\ 
+-cos^2(\theta) &amp; -cos(\theta)sin(\theta) &amp; cos^2(\theta) &amp; cos(\theta)sin(\theta) \\ 
+-cos(\theta)sin(\theta) &amp; -sin^2(\theta) &amp; cos(\theta)sin(\theta) &amp; -sin^2(\theta)
+\end{bmatrix} \begin{bmatrix}u_0 \\ v_0 \\ u_1 \\ v_1\end{bmatrix}$$</p>
+<p>After obtaining the <em>local stiffness matrix</em> for each element we can then assemble the <em>global stiffness matrix</em> and the corresponding force and displacement vectors. To do so we must slot the local entries into the correct location in the global matrix. We will use the following truss as an example: <img src="/images/demo_truss.png" alt="demo truss"></p>
+<p>With the <em>local stiffness matricies</em> \(k^{01}\) and \(k^{12}\). We can create \(K\) as follows.
+$$K = \begin{bmatrix}
+k^{01}_{1, 1} &amp; k^{01}_{1, 2} &amp; k^{01}_{1, 3} &amp; k^{01}_{1,4} &amp; 0 &amp; 0 \\ 
+k^{01}_{2, 1} &amp; k^{01}_{2, 2} &amp; k^{01}_{2, 3} &amp; k^{01}_{2,4} &amp; 0 &amp; 0 \\ 
+k^{01}_{3, 1} &amp; k^{01}_{3, 2} &amp; k^{01}_{3, 3} + k^{12}_{1, 1} &amp; k^{01}_{3,4} + k^{12}_{1, 2} &amp; k^{12}_{1, 3} &amp; k^{12}_{1, 4} \\ 
+k^{01}_{4, 1} &amp; k^{01}_{4, 2} &amp; k^{01}_{4, 3} + k^{12}_{2, 1} &amp; k^{01}_{4,4} + k^{12}_{2, 2} &amp; k^{12}_{2, 3} &amp; k^{12}_{2, 4} \\ 
+0 &amp; 0 &amp; k^{12}_{3, 1} &amp; k^{12}_{3, 2} &amp; k^{12}_{3, 3} &amp; k^{12}_{3, 4} \\ 
+0 &amp; 0 &amp; k^{12}_{4, 1} &amp; k^{12}_{4, 2} &amp; k^{12}_{4, 3} &amp; k^{12}_{4, 4}
+\end{bmatrix}$$</p>
+<p>Substituting into our original equation \(Ku=f\) we get this:
+$$\begin{bmatrix}
+k^{01}_{1, 1} &amp; k^{01}_{1, 2} &amp; k^{01}_{1, 3} &amp; k^{01}_{1,4} &amp; 0 &amp; 0 \\ 
+k^{01}_{2, 1} &amp; k^{01}_{2, 2} &amp; k^{01}_{2, 3} &amp; k^{01}_{2,4} &amp; 0 &amp; 0 \\ 
+k^{01}_{3, 1} &amp; k^{01}_{3, 2} &amp; k^{01}_{3, 3} + k^{12}_{1, 1} &amp; k^{01}_{3,4} + k^{12}_{1, 2} &amp; k^{12}_{1, 3} &amp; k^{12}_{1, 4} \\ 
+k^{01}_{4, 1} &amp; k^{01}_{4, 2} &amp; k^{01}_{4, 3} + k^{12}_{2, 1} &amp; k^{01}_{4,4} + k^{12}_{2, 2} &amp; k^{12}_{2, 3} &amp; k^{12}_{2, 4} \\ 
+0 &amp; 0 &amp; k^{12}_{3, 1} &amp; k^{12}_{3, 2} &amp; k^{12}_{3, 3} &amp; k^{12}_{3, 4} \\ 
+0 &amp; 0 &amp; k^{12}_{4, 1} &amp; k^{12}_{4, 2} &amp; k^{12}_{4, 3} &amp; k^{12}_{4, 4}
+\end{bmatrix}
+\begin{bmatrix} u_0 \\ v_0 \\ u_1 \\ v_1 \\ u_2 \\ v_2 \end{bmatrix} = 
+\begin{bmatrix} f_{x0} \\ f_{y0} \\ f_{x1} \\ f_{y1} \\ f_{x2} \\ f_{y2} \end{bmatrix}
+$$</p>
+<p>The final trick to solving this equation is to eliminate rows and columns for nodes that are fixed. In this example we can remove the rows and columns corresponding to the nodes \(0\) and \(2\) or indexes \(0\), \(1\), \(5\) and \(6\). Considering that the displayed force is only in the y direction our <strong>final</strong> problem looks like this:
+$$\begin{bmatrix}
+k^{01}_{3, 3} + k^{12}_{1, 1} &amp; k^{01}_{3,4} + k^{12}_{1, 2} \\ 
+k^{01}_{4, 3} + k^{12}_{2, 1} &amp; k^{01}_{4,4} + k^{12}_{2, 2}\\ 
+\end{bmatrix}
+\begin{bmatrix} u_1 \\ v_1 \end{bmatrix} = 
+\begin{bmatrix} 0 \\ f_{y1} \end{bmatrix}
+$$</p>
+<p>After solving for \(u_1\) and \(v_1\) we can substitute the values we get back into the full problem above and matrix multiply to get the reaction forces.</p>
 
       </div>
     </article>
@@ -236,7 +312,17 @@
     </div>
 
     <div id="toc-footer" style="display: none">
-      <nav id="TableOfContents"></nav>
+      <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#controls">Controls:</a></li>
+      </ul>
+    </li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#fea-explained">FEA Explained</a></li>
+  </ul>
+</nav>
     </div>
 
     <div id="share-footer" style="display: none">
@@ -352,6 +438,22 @@
 <script src=/js/main.js></script>
 
 
+
+
+
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']]
+    },
+    svg: {
+      fontCache: 'global'
+    }
+  };
+</script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
 
 
 </html>

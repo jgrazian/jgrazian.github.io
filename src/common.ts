@@ -11,6 +11,18 @@ export function getMousePos(canvas: HTMLCanvasElement, ev: MouseEvent): Vec2 {
     )
 }
 
+export function round(num, decimalPlaces = 0) {
+    var p = Math.pow(10, decimalPlaces);
+    var m = (num * p) * (1 + Number.EPSILON);
+    return Math.round(m) / p;
+}
+
+export function roundToNearest(numToRound, numToRoundTo) {
+    numToRoundTo = 1 / (numToRoundTo);
+
+    return Math.round(numToRound * numToRoundTo) / numToRoundTo;
+}
+
 // Interpolates hex colors
 // Enter a and b as hex number 0xffffff
 // https://gist.github.com/nikolas/b0cce2261f1382159b507dd492e1ceef

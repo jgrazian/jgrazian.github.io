@@ -61,8 +61,11 @@
         {{ end }}
       </div>
       {{ end }}
-      <canvas style="border: solid 1px black; width: 100%;" id="canvas" width="960" height="540">Couldn't display
-        canvas</canvas>
+      <canvas style="border: solid 1px black; width: 100%;
+        position: relative; z-index:101;
+        -moz-user-select: none; -webkit-user-select: none; " id="canvas" width="960" height="540">
+        Couldn't display canvas
+      </canvas>
       <script type="module">
         import { main } from '{{.Params.script}}';
         async function indexMain() {

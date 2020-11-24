@@ -13,9 +13,8 @@
       <pubDate>Mon, 16 Nov 2020 14:55:00 +0000</pubDate>
       
       <guid>https://jgrazian.github.io/posts/2020_11_16_exp02_truss/</guid>
-      <description>A 2d truss solver.
-Controls:
- Click on nodes to select Click and drag to move nodes With a node selected click on other nodes to toggle connection. Click on trash with a node selected to delete it Double-Click on a node to begin forcing it. Click again to create a force in that direction with magnitude proportional to the distance between the node and click.  </description>
+      <description>E (GPa) | σyield (MPa) | A (m2) Position (m) | Force (kN)
+Controls:  Click on nodes to select Click and drag to move nodes With a node selected click on other nodes to toggle connection. Use the mouse wheel to rotate a fixed or roller node. To delete a node select it then click &amp;lsquo;Trash&amp;rsquo; Double-Click on a node to add force in the direction of the next mouse click.</description>
     </item>
     
     <item>
