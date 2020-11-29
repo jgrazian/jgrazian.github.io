@@ -109,16 +109,16 @@ export class Vec2 {
 export class Matrix {
   n: number; // Across
   m: number; // Down
-  data: Float32Array;
+  data: Float64Array;
 
   constructor(n: number, m: number) {
     this.n = n;
     this.m = m;
-    this.data = new Float32Array(n * m);
+    this.data = new Float64Array(n * m);
   }
 
   static from(n: number, m: number, d: Iterable<number>) {
-    let data = Float32Array.from(d);
+    let data = Float64Array.from(d);
     if (data.length != n*m) {
       throw `Given data length can not be made into matrix of size ${n}x${m}`;
     }
@@ -196,36 +196,27 @@ export class Matrix {
    * @param b b Vector to be augmented on A matrix
    */
   gaussianElimination(b: Vector) {
-    let n = this.n;
-    for (let j=0; j < n-1; j++) {
-
-      console.log(j);
-      let maxVal = Math.abs(this.get(j, j));
-      let maxRow = j;
-      for (let i=j+1; i < n; i++) {
-        let curVal = Math.abs(this.get(i, j));
-        if (curVal > maxVal) {
-          maxVal = curVal;
-          maxRow = i;
+    for (let i=0; i < this.n-1; i++) {
+      // Partial Pivoting
+      let maxVal = Math.abs(this.get(i ,i));
+      let maxIdx = i;
+      for (let ii=i+1; ii < this.n; ii++) {
+        if (Math.abs(this.get(ii, i)) > maxVal) {
+          maxVal = Math.abs(this.get(ii, i));
+          maxIdx = ii;
         }
       }
-      if (maxVal < 0.00001) {
-        console.log('Skip row')
-        continue;
-      }
-      if (maxRow != j) {
-        console.log(`Swapping ${j} and ${maxRow}`);
-        this.swapRow(j, maxRow);
-        b.swapRow(j, maxRow);
+      if (maxIdx != i) {
+        this.swapRow(i, maxIdx);
+        b.swapRow(i, maxIdx);
       }
 
-      for (let i=j+1; i < n; i++) {
-        let m = this.get(i, j)/this.get(j, j);
-        for (let k=j; k < n; k++) {
-          this.set(i, k, this.get(i, k) - m*this.get(j, k));
-          console.log(this.toString());
+      for (let j=i+1; j < this.n; j++) {
+        let m = this.get(j, i) / this.get(i, i);
+        for (let k=i; k < this.n; k++) {
+          this.set(j, k, this.get(j, k) - m*this.get(i, k));
         }
-        b.set(i, b.get(i) - m*b.get(j));
+        b.set(j, b.get(j) - m*b.get(i));
       }
     }
   }
@@ -251,25 +242,24 @@ export class Matrix {
    * @param b
    */
   solve(b: Vector): Vector {
-    let bCopy = new Vector(b.n);
-    bCopy.data = Float32Array.from(b.data);
-    this.gaussianElimination(bCopy);
-    console.log(this.toString());
+    let aCopy = Matrix.from(this.n, this.n, this.data);
+    let bCopy = Vector.from(b.data);
+    aCopy.gaussianElimination(bCopy);
     return this.backSubstitution(bCopy);
   }
 }
 
 export class Vector {
   n: number;
-  data: Float32Array;
+  data: Float64Array;
 
   constructor(n: number) {
     this.n = n;
-    this.data = new Float32Array(n);
+    this.data = new Float64Array(n);
   }
 
   static from(d: Iterable<number>) {
-    let data = Float32Array.from(d);
+    let data = Float64Array.from(d);
     let v = new Vector(data.length);
     v.data = data;
     return v;

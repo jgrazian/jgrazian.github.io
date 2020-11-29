@@ -6,7 +6,16 @@
     <description>Recent content on Joseph Graziano</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 16 Nov 2020 14:55:00 +0000</lastBuildDate><atom:link href="https://jgrazian.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 29 Nov 2020 13:42:00 +0000</lastBuildDate><atom:link href="https://jgrazian.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Experiment #3: Testing WASM Speed</title>
+      <link>https://jgrazian.github.io/posts/2020_11_29_exp03_wasmspeed/</link>
+      <pubDate>Sun, 29 Nov 2020 13:42:00 +0000</pubDate>
+      
+      <guid>https://jgrazian.github.io/posts/2020_11_29_exp03_wasmspeed/</guid>
+      <description>My previous experiment posts use a little Math/Geometry engine I wrote in Rust and compiled to Web-Assembly that I call &amp;lsquo;Newton-2d&amp;rsquo;. In my truss solver uses the WASM engine to solve the matrix problem discussed in the post by using Gaussian Elimination. Naive Gaussian Elimination is an O(n^3) algorithm so it quickly becomes quite unruly at larger matrix sizes so I figured that WASM would speed things up a bit. I decied to actually test this hypothesis here where I run the same GE algorithm in Javascript and WASM.</description>
+    </item>
+    
     <item>
       <title>Experiment #2: Truss Solver</title>
       <link>https://jgrazian.github.io/posts/2020_11_16_exp02_truss/</link>
