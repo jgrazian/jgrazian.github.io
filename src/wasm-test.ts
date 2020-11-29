@@ -12,17 +12,17 @@ export async function main() {
     let tWasm = 0.0;
 
     let buttons = [
-        new Button('100', () => {[tJs, tWasm] = test(100);}, new Vec2(10, 10), new Vec2(150, 50)),
-        new Button('1,000', () => {[tJs, tWasm] = test(1000);}, new Vec2(170, 10), new Vec2(150, 50)),
-        new Button('2,000', () => {[tJs, tWasm] = test(2000);}, new Vec2(330, 10), new Vec2(150, 50)),
-        new Button('5,000', () => {[tJs, tWasm] = test(5000);}, new Vec2(490, 10), new Vec2(150, 50)),
-        new Button('10,000', () => {[tJs, tWasm] = test(10000);}, new Vec2(650, 10), new Vec2(150, 50))
+        new Button('100', () => { [tJs, tWasm] = test(100); }, new Vec2(10, 10), new Vec2(150, 50)),
+        new Button('500', () => { [tJs, tWasm] = test(500); }, new Vec2(170, 10), new Vec2(150, 50)),
+        new Button('1,000', () => { [tJs, tWasm] = test(1000); }, new Vec2(330, 10), new Vec2(150, 50)),
+        new Button('1,500', () => { [tJs, tWasm] = test(1500); }, new Vec2(490, 10), new Vec2(150, 50)),
+        new Button('2,000', () => { [tJs, tWasm] = test(2000); }, new Vec2(650, 10), new Vec2(150, 50))
     ];
 
     canvas.addEventListener('click', ev => {
         let mpos = getMousePos(canvas, ev);
         buttons.forEach(b => b.click(mpos));
-        
+
         draw(ctx, tJs, tWasm);
         buttons.forEach(b => b.draw(ctx));
     });
@@ -36,7 +36,7 @@ function draw(ctx: CanvasRenderingContext2D, tJs: number, tWasm: number) {
 
     ctx.font = '36px JetBrains Mono';
     ctx.textAlign = 'start';
-    ctx.fillText('Javascript:',200, 150);
+    ctx.fillText('Javascript:', 200, 150);
     ctx.fillText(round(tJs / 1000, 4).toString() + 's', 200, 200);
 
     ctx.fillText('Web Assembly:', 550, 150);
@@ -68,8 +68,8 @@ function test(n: number) {
 
 function randomMatrixData(n: number) {
     let data = new Float64Array(n * n);
-    for (let i=0; i < n; i++) {
-        for (let j=0; j < n; j++) {
+    for (let i = 0; i < n; i++) {
+        for (let j = 0; j < n; j++) {
             let idx = i * n + j;
             if (j == i) {
                 data[idx] = 10;
@@ -83,7 +83,7 @@ function randomMatrixData(n: number) {
 
 function randomVectorData(n: number) {
     let data = new Float64Array(n);
-    for (let i=0; i < n; i++) {
+    for (let i = 0; i < n; i++) {
         data[i] = Math.random() * 10;
     }
     return data;

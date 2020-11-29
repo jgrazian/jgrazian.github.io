@@ -11,7 +11,7 @@ katex: false
 
 My previous experiment posts use a little Math/Geometry engine I wrote in Rust and compiled to Web-Assembly that I call 'Newton-2d'. In my [truss solver](/posts/2020_11_16_exp02_truss) uses the WASM engine to solve the matrix problem discussed in the post by using Gaussian Elimination. Naive Gaussian Elimination is an O(n^3) algorithm so it quickly becomes quite unruly at larger matrix sizes so I figured that WASM would speed things up a bit. I decied to actually test this hypothesis here where I run the same GE algorithm in Javascript and WASM.
 
-Needless to say the results are... disappointing. WASM seems to be slower than Javascript for every n my poor labtop will even run. My best guess for this result is that the time it takes to copy data to and from WASM overshadows the performance gain from using WASM itself. Perhaps at larger n values WASM becomes more worthwhile but at those matrix sizes GE becomes unbearably slow on just about any single thread... So ¯\\_(ツ)_/¯ WASM is cool anyway.
+Needless to say the results are variable. On my labtop Javascript tends to be faster than WASM, but on my desktop WASM has the upperhand. My best guess for this result is that the time it takes to copy data to and from WASM overshadows the performance gain from using WASM itself and my labtop's slow memory/CPU accentuate the problem. At larger n values WASM definitely becomes more worthwhile but at those matrix sizes the GE algo becomes unbearably slow in just about any language on 1 thread... In conclusion ¯\\_(ツ)_/¯ WASM is cool anyway.
 
 Here is the Gaussian Elimination algorithm in Rust:
 ```rust

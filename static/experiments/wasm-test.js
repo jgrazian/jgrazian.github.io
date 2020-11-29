@@ -9,10 +9,10 @@ export async function main() {
     let tWasm = 0.0;
     let buttons = [
         new Button('100', () => { [tJs, tWasm] = test(100); }, new Vec2(10, 10), new Vec2(150, 50)),
-        new Button('1,000', () => { [tJs, tWasm] = test(1000); }, new Vec2(170, 10), new Vec2(150, 50)),
-        new Button('2,000', () => { [tJs, tWasm] = test(2000); }, new Vec2(330, 10), new Vec2(150, 50)),
-        new Button('5,000', () => { [tJs, tWasm] = test(5000); }, new Vec2(490, 10), new Vec2(150, 50)),
-        new Button('10,000', () => { [tJs, tWasm] = test(10000); }, new Vec2(650, 10), new Vec2(150, 50))
+        new Button('500', () => { [tJs, tWasm] = test(500); }, new Vec2(170, 10), new Vec2(150, 50)),
+        new Button('1,000', () => { [tJs, tWasm] = test(1000); }, new Vec2(330, 10), new Vec2(150, 50)),
+        new Button('1,500', () => { [tJs, tWasm] = test(1500); }, new Vec2(490, 10), new Vec2(150, 50)),
+        new Button('2,000', () => { [tJs, tWasm] = test(2000); }, new Vec2(650, 10), new Vec2(150, 50))
     ];
     canvas.addEventListener('click', ev => {
         let mpos = getMousePos(canvas, ev);
